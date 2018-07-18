@@ -6,20 +6,33 @@ import (
 	"time"
 )
 
-func createProcess(process [][]int){
+type fcfsStruct struct{
+	curProc int
+	process [][]int
+	queue []int	
+}
 
-	printData(process,4)
+func createProcess(fcfs *fcfsStruct){
 
-	for i:= 0; i < len(process); i++{
-		process[i][0] = rand.Intn(9) + 1
-		process[i][1] = rand.Intn(9) + 1
+	fcfs.process = make([][]int, 5)
+	for i := range fcfs.process{
+		fcfs.process[i] = make([]int, 2)
+	}	
+	
+	rand.Seed(time.Now().Unix())
+
+	printData(fcfs, 4)
+
+	for i:= 0; i < len(fcfs.process); i++{
+		fcfs.process[i][0] = rand.Intn(9) + 1
+		fcfs.process[i][1] = rand.Intn(9) + 1
 
 		for j := 0; j < 3; j++ {
-			printData(process, (j) % 3)
+			printData(fcfs, (j) % 3)
 		}
 	}
 	
-	printData(process,3)
+	printData(fcfs,3)
 	
 }
 
@@ -32,7 +45,6 @@ func getProcessList(process [][]int){
 		if process[i][0] == 0 {
 			fmt.Printf("P%d: Not created\n", i+1)
 		} else{
-
 			fmt.Printf("P%d:\t%4d\t%3d\n", i+1, process[i][0], process[i][1])	
 		}
 	}
@@ -41,7 +53,7 @@ func getProcessList(process [][]int){
 }
 
 
-func getStatus(status int){
+func getStatus(status int, process int){
 	
 	fmt.Printf("Status: ")
 
@@ -55,7 +67,12 @@ func getStatus(status int){
 	case 3:
 		fmt.Println("Processes generated!")
 	case 4:
-		fmt.Println("Starting Algorthm")
+		fmt.Println("Starting Program.")
+	case 5:
+		fmt.Println("Starting Algorithm.")
+	case 6:
+		fmt.Printf("P%d has arrived, adding to queue.", process + 1)
+		fmt.Println()
 	default:
 	}
 
@@ -63,62 +80,68 @@ func getStatus(status int){
 
 }
 
-func getQueue(queue []int){
+func getQueue(queue  []int){
+	if len(queue) == 0 {
+		fmt.Println("Queue: Currently empty")
+	}else{
+		fmt.Printf("Queue: ")
+		for i := 0; i < len(queue); i++{
+			fmt.Printf("%d ", queue[i] + 1)
+		}
+		fmt.Println()
+	}
 	
 }
 
-func printData(process [][]int, status int){
+func printData(fcfs *fcfsStruct, status int){
 
 	for i := 0; i < 35; i++{
 		fmt.Printf("-")
 	}
 	fmt.Println()
-	getStatus(status)
-	getProcessList(process)
-	getQueue(queue)
+	getStatus(status, fcfs.curProc)
+	getProcessList(fcfs.process)
+	getQueue(fcfs.queue)
 	time.Sleep(time.Second)
 }
 
-func fcfs(process [][]int){
+func fcfsAlgo(fcfs *fcfsStruct){
 	
-	queue := []int{}
 	var cur int = -1
 
-	fmt.Println(process)
-	limit := len(process)
+	printData(fcfs, 5)
+
+	limit := len(fcfs.process)
 
 	for i := 0; i < 100; i++{
-		for j := 0; j < len(process); j++{
+		for j := 0; j < len(fcfs.process); j++{
 			
-			if process[j][0] == i {
-				fmt.Printf("Time %d : %d arrived\n", i, j)
-				queue = append(queue, j)
+			if fcfs.process[j][0] == i {
+				fcfs.curProc = j
+				printData(fcfs, 6)
+				fcfs.queue = append(fcfs.queue, fcfs.curProc)
+				printData(fcfs, 6)
 			}
 		}
-		if len(queue) > 0 {
-			fmt.Println(queue)
-		}
-		if cur > -1  && process[cur][1] > 0 {
-			process[cur][1]--
 
-			if process[cur][1] == 0 { 
+		if cur > -1  && fcfs.process[cur][1] > 0 {
+			fcfs.process[cur][1]--
+
+			if fcfs.process[cur][1] == 0 { 
 				cur = -1	
 				limit--
 			}
 		}
 
-		if len(queue) > 0 && cur == -1 {
-			cur = queue[0]
-			queue = queue[1:]
+		if len(fcfs.queue) > 0 && cur == -1 {
+			cur = fcfs.queue[0]
+			fcfs.queue = fcfs.queue[1:]
 		}
 		
 		if limit == 0{
-			fmt.Println(i)
 			break
 		}
 
-	
-		
 	}
 	
 }
@@ -126,19 +149,13 @@ func fcfs(process [][]int){
 
 func main() {
 
-	process := make([][]int, 5)
-	for i := range process{
-		process[i] = make([]int, 2)
-	}	
-	
-	rand.Seed(time.Now().Unix())
-	
+	fcfs := fcfsStruct{}
 
 //	printStatus(1)
 
-	createProcess(process)
+	createProcess(&fcfs)
 	
-//	fcfs(process)
+	fcfsAlgo(&fcfs)
 
 
 }
