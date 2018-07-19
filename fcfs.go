@@ -22,9 +22,9 @@ func createProcess(fcfs *fcfsStruct){
 
 	fcfs.process = [][]int{
 		{1, 5, 5}, 
-		{2, 2, 2}, 
+		{2, 3, 3}, 
 		{4, 4, 4}, 
-		{5, 6, 6}, 
+		{5, 1, 1}, 
 		{7, 2, 2},
 	}	
 		
@@ -33,13 +33,13 @@ func createProcess(fcfs *fcfsStruct){
 func getProcessList(process [][]int){
 	
 
-	fmt.Println("Process\tArrival\tBurst Remaining")
+	fmt.Println("Process\tArrival\tBurst")
 	for i := 0; i < len(process); i++{
 		
 		if process[i][0] == 0 {
 			fmt.Printf("P%d: Not created\n", i+1)
 		} else{
-			fmt.Printf("P%d:\t%4d\t%3d\t%3d\n", i+1, process[i][0], process[i][1], process[i][2])	
+			fmt.Printf("P%d:\t%4d\t%3d\n", i+1, process[i][0], process[i][1])
 		}
 	}
 
@@ -49,6 +49,7 @@ func getProcessList(process [][]int){
 
 func getStatus(status int, process int){
 	
+	fmt.Println()
 	fmt.Printf("Status: ")
 
 	switch status{
@@ -69,8 +70,6 @@ func getStatus(status int, process int){
 	default:
 
 	}
-
-	fmt.Println()
 
 }
 
@@ -98,20 +97,52 @@ func getQueue(queue  []int){
 		fmt.Println()
 	}
 	
+	fmt.Println()
 }
 
-func getTime(time int){
+func getTime(time int, timeline []int){
 	
 	if time == 0 {
 		fmt.Println("Time: Algorithm has not started")	
 	} else{
 		fmt.Printf("Time: %d\n", time)
 	}
-}
 
-func getTimeLine(timeline []int){
+	fmt.Println("Timeline")
+
+	for i := 0; i < 15; i++ {
+		fmt.Printf("------")
+	}
+	fmt.Println("-")
+	for i := 0; i < 15; i++ {
 	
-	fmt.Println(timeline)
+		fmt.Printf("|")
+		fmt.Printf("%3d  ", (i + 1) % 10)
+	}	
+	fmt.Println("|")
+
+	for i := 0; i < 15; i++ {
+		fmt.Printf("------")
+	}
+	fmt.Println("-")
+
+	fmt.Printf("|")
+	for i := 0; i < len(timeline); i++ {
+	
+		fmt.Printf("%3d  |", timeline[i])
+	}	
+
+	for i := 0; i < (15 - len(timeline)); i++ {
+		fmt.Printf("     |")
+	}
+	fmt.Println()
+
+	for i := 0; i < 15; i++ {
+		fmt.Printf("------")
+	}
+	fmt.Println("-")
+
+	
 }
 
 func printData(fcfs *fcfsStruct, status int){
@@ -126,19 +157,17 @@ func printData(fcfs *fcfsStruct, status int){
 	getProcessList(fcfs.process)
 
 	getQueue(fcfs.queue)
-	getTime(fcfs.time)
-	getTimeLine(fcfs.timeLine)
+	getTime(fcfs.time, fcfs.timeLine)
 	getStatus(status, fcfs.curProc)
 	
 	
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second)
 }
 
 func fcfsAlgo(fcfs *fcfsStruct){
 	
 	var cur int = -1
 
-	printData(fcfs, 5)
 
 	limit := len(fcfs.process)
 
