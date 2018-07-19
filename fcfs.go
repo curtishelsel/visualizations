@@ -8,6 +8,8 @@ package main
 import (
 	"fmt"
 	"time"
+	"os"
+	"os/exec"
 )
 
 const limit int = 15
@@ -158,9 +160,13 @@ func getTime(time int, timeline []int){
 // Prints current screen in algorithm 
 func printData(fcfs *fcfsStruct, status int){
 
-	for i:= 0; i < 3; i++{
-		fmt.Println()
-	}	
+	// clear ther terminal
+	clear := exec.Command("clear")
+	clear.Stdout = os.Stdout
+	clear.Run()
+
+	fmt.Println()
+
 	fmt.Println("First Come First Served Algorithm")
 	fmt.Println()
 	
